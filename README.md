@@ -26,6 +26,22 @@ direnv allow
 
 This will automatically install packages like `bun`, `typescript-lsp`, etc.
 
+## Documentation
+
+### Api Key
+
+The api key is stored in the [env](./env) file as `VITE_OMDBAPI_KEY`, in a production enviroment this would not be commited, to prevent leaking of any API keys.
+
+### Styling
+
+I've opted for tailwind class names for the styling, as it's the quickest way to bootstrap such an application.
+
+### API library
+
+I've used <a href="https://zod.dev/" rel="noopener">Zod</a> library in this repository for the data schema validation, which was not a requirement but it's almost for free code wise and makes your types much easier to reason about.
+
+It would be possible to not use the library as per request, but that would make the code convoluted, so I've made an exception here, I hope that's ok :)
+
 ### Testing the API
 
 You can test the API via a `REPL` without having to interact with the ui like this:
@@ -51,15 +67,3 @@ To show movie details:
 ``` js
 fetchMovieById('tt0482521').then(console.log)
 ```
-
-## Documentation
-
-### Styling
-
-I've opted for tailwind class names for the styling, as it's the quickest way to bootstrap such an application.
-
-### API library
-
-I've used <a href="https://zod.dev/" rel="noopener">Zod</a> library in this repository for the data schema validation, which was not a requirement but it's almost for free code wise and makes your types much easier to reason about.
-
-It would be possible to not use the library as per request, but that would make the code convoluted, so I've made an exception here, I hope that's ok :)
