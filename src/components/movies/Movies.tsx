@@ -5,7 +5,7 @@ import GroupMoviesWorker from "./groupingWorker.ts?worker";
 
 import { Search } from "./Search";
 import { useState } from "react";
-import { fetchMoviesByQuery, onError } from "./lib";
+import { fetchMovieById, fetchMoviesByQuery, onError } from "./lib";
 import { MovieQueryData } from "./types/MovieQueryData";
 import { MovieDetailsData } from "./types/MovieDetailsData";
 import { GroupedMovies } from "./types/GroupedMovies";
@@ -44,9 +44,37 @@ const Header = function ({ onSearch }: HeaderProps) {
   );
 };
 
+export const MovieDetails = ({ movie }: { movie: MovieDetailsData }) => {
+  return (
+    <div className="flex flex-col rounded-lg bg-slate-700 p-5 shadow-lg md:flex-row">
+      <div className="md:shrink-0">
+        <img
+          src={movie.Poster}
+          alt="Movie Poster"
+          className="w-full rounded-lg md:w-48"
+        />
+      </div>
+      <div className="mt-4 md:ml-6 md:mt-0">
+        <div className="text-sm font-semibold uppercase tracking-wide text-indigo-500">
+          {movie.Genre}
+        </div>
+        <a
+          href={`https://www.imdb.com/title/${movie.imdbID}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-1 block text-lg font-medium leading-tight text-black hover:underline dark:text-white"
+        >
+          {movie.Title}
+        </a>
+        <p className="mt-2 text-gray-600 dark:text-gray-400">{movie.Plot}</p>
+      </div>
+    </div>
+  );
+};
+
 interface MovieProps {
   movie: MovieQueryData;
-  onSelectMovieId: (query: string) => void;
+  onSelectMovieId: (id: string) => void;
 }
 
 const Movie = function ({ movie, onSelectMovieId }: MovieProps) {
@@ -86,7 +114,7 @@ const Movie = function ({ movie, onSelectMovieId }: MovieProps) {
 
 interface MovieListProps {
   movies: GroupedMovies;
-  onSelectMovieId: (query: string) => void;
+  onSelectMovieId: (id: string) => void;
 }
 
 export const MovieList = ({ movies, onSelectMovieId }: MovieListProps) => {
@@ -115,16 +143,22 @@ export const MovieList = ({ movies, onSelectMovieId }: MovieListProps) => {
 };
 
 interface MainRouteProps {
-  state: State;
+  route: Route;
+  onSelectMovieId: (id: string) => void;
 }
 
-const MainRoute: React.FC<MainRouteProps> = function ({ state }) {
-  return match(state.route)
+const MainRoute: React.FC<MainRouteProps> = function ({
+  route,
+  onSelectMovieId,
+}) {
+  return match(route)
     .with({ name: "home" }, () => <div>{"Hello"}</div>)
     .with({ name: "search", data: P.select() }, (movies) => (
-      <MovieList movies={movies} onSelectMovieId={console.log} />
+      <MovieList movies={movies} onSelectMovieId={onSelectMovieId} />
     ))
-    .with({ name: "details" }, () => <div>{"Details"}</div>)
+    .with({ name: "details", data: P.select() }, (movie) => (
+      <MovieDetails movie={movie} />
+    ))
     .otherwise(() => null);
 };
 
@@ -179,11 +213,30 @@ export const Movies: React.FC = () => {
       });
   };
 
+  const onSelectMovieId = (id: string) => {
+    if (dataPromise) {
+      dataPromise.cancel();
+    }
+
+    setRoute({ name: "loading" });
+
+    const promise = cancelable(fetchMovieById(id));
+
+    promise
+      .then((data: MovieDetailsData) => {
+        setRoute({ name: "details", id, data });
+      })
+      .catch(function (err) {
+        const errorString = onError(err as Error);
+        setRoute({ name: "error", error: errorString });
+      });
+  };
+
   return (
     <div className="flex flex-col items-center">
       <Header onSearch={(query) => onSearch(query)} />
       <div className="flex w-full max-w-screen-lg p-5">
-        <MainRoute state={state} />
+        <MainRoute route={state.route} onSelectMovieId={onSelectMovieId} />
       </div>
     </div>
   );

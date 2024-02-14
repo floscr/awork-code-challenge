@@ -5,7 +5,6 @@ import {
   MovieDetailsData,
 } from "./types/MovieDetailsData";
 import { ApiQueryResponseSchema, MovieQueryData } from "./types/MovieQueryData";
-import { FetchResult, Ok, Err } from "./types/FetchResult";
 
 interface FetchMoviesDataParams {
   query?: string;
@@ -61,24 +60,18 @@ export const fetchMoviesByQuery = async (
   }
 };
 
-export const fetchMovieById = async (
-  id: string,
-): Promise<FetchResult<MovieDetailsData>> => {
+export const fetchMovieById = async (id: string): Promise<MovieDetailsData> => {
   const url = omdbUrl({ id }).toString();
 
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Network response was not ok.");
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Network response was not ok.");
 
-    const jsonData = (await response.json()) as unknown;
-    const data = ApiDetailsResponseSchema.parse(jsonData);
+  const jsonData = (await response.json()) as unknown;
+  const data = ApiDetailsResponseSchema.parse(jsonData);
 
-    if (data.Response === "True") {
-      return Ok(data);
-    } else {
-      throw new Error(data.Error);
-    }
-  } catch (error) {
-    return Err(onError(error as Error));
+  if (data.Response === "True") {
+    return data;
+  } else {
+    throw new Error(data.Error);
   }
 };
