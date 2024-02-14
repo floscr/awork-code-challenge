@@ -82,7 +82,7 @@ export const Movies: React.FC = () => {
 
   const setRoute = (route: Route) => setState((state) => ({ ...state, route }));
 
-  const onSearch = function (query: string) {
+  const onSearch = (query: string) => {
     setRoute({ name: "loading" });
 
     fetchMoviesByQuery(query)
