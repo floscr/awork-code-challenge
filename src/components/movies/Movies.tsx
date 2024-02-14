@@ -20,8 +20,6 @@ type Route =
 
 interface State {
   route: Route;
-  /* queryResults: MovieQueryData;
-   * detailsResults: MovieDetailsData; */
 }
 
 interface HeaderProps {
@@ -30,8 +28,6 @@ interface HeaderProps {
 
 const defaultState: State = {
   route: { name: "home" },
-  /* queryResults: new Map(),
-   * detailsResults: new Map(), */
 };
 
 const Header = function ({ onSearch }: HeaderProps) {
