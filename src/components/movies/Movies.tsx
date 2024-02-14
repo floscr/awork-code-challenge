@@ -80,28 +80,19 @@ const asyncWorkerGroupMovies = function (
 export const Movies: React.FC = () => {
   const [state, setState] = useState<State>(defaultState);
 
-  console.log(state);
+  const setRoute = (route: Route) => setState((state) => ({ ...state, route }));
 
   const onSearch = function (query: string) {
-    setState({
-      ...state,
-      route: { name: "loading" },
-    });
+    setRoute({ name: "loading" });
 
     fetchMoviesByQuery(query)
       .then(asyncWorkerGroupMovies)
       .then((data: GroupedMovies) => {
-        setState((state) => ({
-          ...state,
-          route: { name: "search", query, data },
-        }));
+        setRoute({ name: "search", query, data });
       })
       .catch(function (err) {
         const errorString = onError(err as Error);
-        setState((state) => ({
-          ...state,
-          route: { name: "error", error: errorString },
-        }));
+        setRoute({ name: "error", error: errorString });
       });
   };
 
