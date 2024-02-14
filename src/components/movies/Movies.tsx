@@ -98,11 +98,7 @@ export const Movies: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center">
-      <Header
-        onSearch={(query) => {
-          void onSearch(query);
-        }}
-      />
+      <Header onSearch={(query) => onSearch(query)} />
       <div className="flex w-full max-w-screen-lg p-5">
         <MainRoute state={state} />
       </div>
