@@ -1,4 +1,5 @@
 import { IconMovie } from "@tabler/icons-react";
+import { match } from "ts-pattern";
 
 import { Search } from "./Search";
 import { useState } from "react";
@@ -64,19 +65,20 @@ export const Movies: React.FC = () => {
     });
 
     const result = await fetchMoviesByQuery(query);
-    if (result.kind === "Ok") {
-      const data = result.data;
-      setState((state) => ({
-        ...state,
-        route: { name: "search", query, data },
-      }));
-    } else if (result.kind === "Error") {
-      const error = result.error;
-      setState((state) => ({
-        ...state,
-        route: { name: "error", error },
-      }));
-    }
+
+    match(result)
+      .with({ kind: "Ok" }, ({ data }: { data: MovieQueryData }) => {
+        setState((state) => ({
+          ...state,
+          route: { name: "search", query, data },
+        }));
+      })
+      .with({ kind: "Error" }, ({ error }: { error: string }) => {
+        setState((state) => ({
+          ...state,
+          route: { name: "error", error },
+        }));
+      });
   };
 
   return (
