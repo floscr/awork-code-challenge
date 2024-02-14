@@ -1,4 +1,5 @@
 import { IconMovie } from "@tabler/icons-react";
+import { cancelable, CancelablePromise } from "cancelable-promise";
 
 import GroupMoviesWorker from "./groupingWorker.ts?worker";
 
@@ -8,6 +9,7 @@ import { fetchMoviesByQuery, onError } from "./lib";
 import { MovieQueryData } from "./types/MovieQueryData";
 import { MovieDetailsData } from "./types/MovieDetailsData";
 import { GroupedMovies } from "./types/GroupedMovies";
+import { match, P } from "ts-pattern";
 
 type Route =
   | { name: "home" }
@@ -46,15 +48,88 @@ const Header = function ({ onSearch }: HeaderProps) {
   );
 };
 
-const MainRoute = function ({ state }: { state: State }) {
-  switch (state.route.name) {
-    case "home":
-      return <div>{"Hello"}</div>;
-    case "search":
-      return <div>{"Search"}</div>;
-    case "details":
-      return <div>{"details"}</div>;
-  }
+interface MovieProps {
+  movie: MovieQueryData;
+  onSelectMovieId: (query: string) => void;
+}
+
+const Movie = function ({ movie, onSelectMovieId }: MovieProps) {
+  return (
+    <div
+      key={movie.imdbID}
+      className="cursor-pointer overflow-hidden rounded-lg border border-slate-700 bg-slate-800 shadow-lg hover:border-blue-400"
+      onClick={() => onSelectMovieId(movie.imdbID)}
+    >
+      <div
+        className="h-56 bg-cover bg-center"
+        style={{ backgroundImage: `url(${movie.Poster})` }}
+      >
+        {movie.Poster === "N/A" && (
+          <div className="flex h-56 items-center justify-center bg-slate-600 opacity-50">
+            No Image Available
+          </div>
+        )}
+      </div>
+      <div className="p-4">
+        <h3 className="text-lg font-bold leading-snug">{movie.Title}</h3>
+        <p className="text-sm opacity-50">
+          {movie.Type}, {movie.Year}
+        </p>
+        <a
+          href={`https://www.imdb.com/title/${movie.imdbID}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-block text-blue-500 hover:text-blue-600"
+        >
+          View on IMDB
+        </a>
+      </div>
+    </div>
+  );
+};
+
+interface MovieListProps {
+  movies: GroupedMovies;
+  onSelectMovieId: (query: string) => void;
+}
+
+export const MovieList = ({ movies, onSelectMovieId }: MovieListProps) => {
+  const years = Array.from(movies.keys()).sort().reverse();
+
+  return (
+    <div className="container mx-auto px-0">
+      {years.map((year) => {
+        return (
+          <div key={year} className="mb-8">
+            <h2 className="mb-4 text-xl font-bold">{year}</h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {movies.get(year)!.map((movie) => (
+                <Movie
+                  key={movie.imdbID}
+                  movie={movie}
+                  onSelectMovieId={onSelectMovieId}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+interface MainRouteProps {
+  state: State;
+}
+
+const MainRoute: React.FC<MainRouteProps> = function ({ state }) {
+  return match(state.route)
+    .with({ name: "home" }, () => <div>{"Hello"}</div>)
+    .with({ name: "search", data: P.select() }, (movies) => (
+      <MovieList movies={movies} onSelectMovieId={console.log} />
+    ))
+    .with({ name: "details" }, () => <div>{"Details"}</div>)
+    .otherwise(() => null);
 };
 
 const asyncWorkerGroupMovies = function (
@@ -79,14 +154,26 @@ const asyncWorkerGroupMovies = function (
 
 export const Movies: React.FC = () => {
   const [state, setState] = useState<State>(defaultState);
+  const [dataPromise, setDataPromise] = useState<CancelablePromise>();
+
+  console.log(state);
 
   const setRoute = (route: Route) => setState((state) => ({ ...state, route }));
 
   const onSearch = (query: string) => {
+    if (dataPromise) {
+      dataPromise.cancel();
+    }
+
     setRoute({ name: "loading" });
 
-    fetchMoviesByQuery(query)
-      .then(asyncWorkerGroupMovies)
+    const promise = cancelable(
+      fetchMoviesByQuery(query).then(asyncWorkerGroupMovies),
+    );
+
+    setDataPromise(promise);
+
+    promise
       .then((data: GroupedMovies) => {
         setRoute({ name: "search", query, data });
       })

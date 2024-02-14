@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tabler/icons-react": "^2.47.0",
+    "cancelable-promise": "^4.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "ts-pattern": "^5.0.6",
