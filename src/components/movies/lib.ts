@@ -35,7 +35,7 @@ const omdbUrl = ({
   return url;
 };
 
-const onError = function (error: Error): string {
+export const onError = function (error: Error): string {
   if (error instanceof z.ZodError) {
     return "Invalid API response structure.";
   } else {
@@ -45,23 +45,19 @@ const onError = function (error: Error): string {
 
 export const fetchMoviesByQuery = async (
   query: string,
-): Promise<FetchResult<MovieQueryData>> => {
+): Promise<MovieQueryData[]> => {
   const url = omdbUrl({ query }).toString();
 
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Network response was not ok.");
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Network response was not ok.");
 
-    const jsonData = (await response.json()) as unknown;
-    const data = ApiQueryResponseSchema.parse(jsonData);
+  const jsonData = (await response.json()) as unknown;
+  const data = ApiQueryResponseSchema.parse(jsonData);
 
-    if (data.Response === "True") {
-      return Ok(data.Search ?? []);
-    } else {
-      throw new Error(data.Error);
-    }
-  } catch (error) {
-    return Err(onError(error as Error));
+  if (data.Response === "True") {
+    return data.Search ?? [];
+  } else {
+    throw new Error(data.Error);
   }
 };
 

@@ -1,16 +1,18 @@
 import { IconMovie } from "@tabler/icons-react";
-import { match } from "ts-pattern";
+
+import GroupMoviesWorker from "./groupingWorker.ts?worker";
 
 import { Search } from "./Search";
 import { useState } from "react";
-import { fetchMoviesByQuery } from "./lib";
+import { fetchMoviesByQuery, onError } from "./lib";
 import { MovieQueryData } from "./types/MovieQueryData";
 import { MovieDetailsData } from "./types/MovieDetailsData";
+import { GroupedMovies } from "./types/GroupedMovies";
 
 type Route =
   | { name: "home" }
   | { name: "loading" }
-  | { name: "search"; query?: string; data: MovieQueryData }
+  | { name: "search"; query?: string; data: GroupedMovies }
   | { name: "details"; id: string; data: MovieDetailsData }
   | { name: "error"; error: string };
 
@@ -55,28 +57,50 @@ const MainRoute = function ({ state }: { state: State }) {
   }
 };
 
+const asyncWorkerGroupMovies = function (
+  movies: MovieQueryData[],
+): Promise<GroupedMovies> {
+  return new Promise((res, rej) => {
+    const worker = new GroupMoviesWorker();
+    worker.postMessage(movies);
+
+    worker.onmessage = (e) => {
+      res(e.data as GroupedMovies);
+      worker.terminate();
+    };
+
+    worker.onerror = (error) => {
+      console.error(`Worker error: ${error.message}`);
+      rej(error.message);
+      worker.terminate();
+    };
+  });
+};
+
 export const Movies: React.FC = () => {
   const [state, setState] = useState<State>(defaultState);
 
-  const onSearch = async function (query: string) {
+  console.log(state);
+
+  const onSearch = function (query: string) {
     setState({
       ...state,
       route: { name: "loading" },
     });
 
-    const result = await fetchMoviesByQuery(query);
-
-    match(result)
-      .with({ kind: "Ok" }, ({ data }: { data: MovieQueryData }) => {
+    fetchMoviesByQuery(query)
+      .then(asyncWorkerGroupMovies)
+      .then((data: GroupedMovies) => {
         setState((state) => ({
           ...state,
           route: { name: "search", query, data },
         }));
       })
-      .with({ kind: "Error" }, ({ error }: { error: string }) => {
+      .catch(function (err) {
+        const errorString = onError(err as Error);
         setState((state) => ({
           ...state,
-          route: { name: "error", error },
+          route: { name: "error", error: errorString },
         }));
       });
   };
