@@ -19,4 +19,4 @@ export const ApiQueryResponseSchema = z.union([
   ApiResponseErrorSchema,
 ]);
 
-export type MovieDetailsData = z.infer<typeof MovieDetailsDataSchema>;
+export type MovieQueryData = z.infer<typeof MovieQueryDataSchema>[];

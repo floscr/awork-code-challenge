@@ -1,5 +1,11 @@
+import { Movies } from "../movies/Movies";
+
 const App: React.FC = () => {
-  return <div className="dark">Hello World</div>;
+  return (
+    <div className="dark">
+      <Movies />
+    </div>
+  );
 };
 
 export default App;

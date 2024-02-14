@@ -1,4 +1,5 @@
 export type FetchResult<T> =
+  | { kind: "Loading" }
   | { kind: "Ok"; data: T }
   | { kind: "Error"; error: string };
 

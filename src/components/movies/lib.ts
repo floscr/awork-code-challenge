@@ -1,8 +1,11 @@
 import { z } from "zod";
 
-import { ApiDetailsResponseSchema } from "./types/MovieDetailsData";
-import { ApiQueryResponseSchema } from "./types/MovieQueryData";
-import { Ok, Err } from "./types/FetchResult";
+import {
+  ApiDetailsResponseSchema,
+  MovieDetailsData,
+} from "./types/MovieDetailsData";
+import { ApiQueryResponseSchema, MovieQueryData } from "./types/MovieQueryData";
+import { FetchResult, Ok, Err } from "./types/FetchResult";
 
 interface FetchMoviesDataParams {
   query?: string;
@@ -58,7 +61,7 @@ export const fetchMoviesByQuery = async (
       throw new Error(data.Error);
     }
   } catch (error) {
-    return Err(onError(error));
+    return Err(onError(error as Error));
   }
 };
 
@@ -80,6 +83,6 @@ export const fetchMovieById = async (
       throw new Error(data.Error);
     }
   } catch (error) {
-    return Err(onError(error));
+    return Err(onError(error as Error));
   }
 };
