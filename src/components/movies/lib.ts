@@ -1,10 +1,13 @@
 import { z } from "zod";
 
+import GroupMoviesWorker from "./groupingWorker.ts?worker";
+
 import {
   ApiDetailsResponseSchema,
   MovieDetailsData,
 } from "./types/MovieDetailsData";
 import { ApiQueryResponseSchema, MovieQueryData } from "./types/MovieQueryData";
+import { GroupedMovies } from "./types/GroupedMovies";
 
 interface FetchMoviesDataParams {
   query?: string;
@@ -40,6 +43,26 @@ export const onError = function (error: Error): string {
   } else {
     return error.message || "An unexpected error occurred.";
   }
+};
+
+export const asyncWorkerGroupMovies = function (
+  movies: MovieQueryData[],
+): Promise<GroupedMovies> {
+  return new Promise((res, rej) => {
+    const worker = new GroupMoviesWorker();
+    worker.postMessage(movies);
+
+    worker.onmessage = (e) => {
+      res(e.data as GroupedMovies);
+      worker.terminate();
+    };
+
+    worker.onerror = (error) => {
+      console.error(`Worker error: ${error.message}`);
+      rej(error.message);
+      worker.terminate();
+    };
+  });
 };
 
 export const fetchMoviesByQuery = async (

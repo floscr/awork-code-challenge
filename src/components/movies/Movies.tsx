@@ -1,11 +1,14 @@
 import { IconMovie } from "@tabler/icons-react";
 import { cancelable, CancelablePromise } from "cancelable-promise";
 
-import GroupMoviesWorker from "./groupingWorker.ts?worker";
-
 import { Search } from "./Search";
 import { useState } from "react";
-import { fetchMovieById, fetchMoviesByQuery, onError } from "./lib";
+import {
+  fetchMovieById,
+  fetchMoviesByQuery,
+  asyncWorkerGroupMovies,
+  onError,
+} from "./lib";
 import { MovieQueryData } from "./types/MovieQueryData";
 import { MovieDetailsData } from "./types/MovieDetailsData";
 import { GroupedMovies } from "./types/GroupedMovies";
@@ -160,26 +163,6 @@ const MainRoute: React.FC<MainRouteProps> = function ({
       <MovieDetails movie={movie} />
     ))
     .otherwise(() => null);
-};
-
-const asyncWorkerGroupMovies = function (
-  movies: MovieQueryData[],
-): Promise<GroupedMovies> {
-  return new Promise((res, rej) => {
-    const worker = new GroupMoviesWorker();
-    worker.postMessage(movies);
-
-    worker.onmessage = (e) => {
-      res(e.data as GroupedMovies);
-      worker.terminate();
-    };
-
-    worker.onerror = (error) => {
-      console.error(`Worker error: ${error.message}`);
-      rej(error.message);
-      worker.terminate();
-    };
-  });
 };
 
 export const Movies: React.FC = () => {
