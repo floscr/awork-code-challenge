@@ -77,6 +77,11 @@ export const MoviesRoot: React.FC = () => {
   };
 
   const onSearch = (query: string) => {
+    if (query === "") {
+      setRoute({ name: "home" });
+      return;
+    }
+
     setRoute({ name: "loading" });
 
     const request = fetchMoviesByQuery(query).then(asyncWorkerGroupMovies);
