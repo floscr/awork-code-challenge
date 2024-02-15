@@ -28,9 +28,6 @@ export const MovieDetailsDataSchema = z
     imdbVotes: z.string(),
     imdbID: z.string(),
     Type: z.string(),
-    DVD: z.string(),
-    BoxOffice: z.string(),
-    Production: z.string(),
     Website: z.string().optional(),
   })
   // Keep the schema open, so if any additional keys get added to the api we wont throw
