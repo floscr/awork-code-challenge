@@ -10,7 +10,7 @@ interface HomeProps {
 export const Home: React.FC<HomeProps> = ({ onSearch }) => {
   return (
     <div
-      className="flex grow items-center justify-center"
+      className="flex h-full grow items-center justify-center"
       style={{
         minHeight: "300px",
         background:
