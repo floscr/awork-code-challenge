@@ -169,24 +169,30 @@ export const MoviesRoot: React.FC = () => {
   const [state, setState] = useState<State>(defaultState);
   const [dataPromise, setDataPromise] = useState<CancelablePromise>();
 
-  console.log(state);
-
   const setRoute = (route: Route) => setState((state) => ({ ...state, route }));
 
-  const onSearch = (query: string) => {
+  // Cancel the current request & load a new request
+  // (to prevent race condition, where a previous request would override the state with old data)
+  const addRequest = function <T>(request: Promise<T>): CancelablePromise<T> {
+    // Cancel the previous request
     if (dataPromise) {
       dataPromise.cancel();
     }
 
+    // Create a new cancelable request
+    const cancellableRequest = cancelable(request);
+    setDataPromise(cancellableRequest);
+
+    return cancellableRequest;
+  };
+
+  const onSearch = (query: string) => {
     setRoute({ name: "loading" });
 
-    const promise = cancelable(
-      fetchMoviesByQuery(query).then(asyncWorkerGroupMovies),
-    );
+    const request = fetchMoviesByQuery(query).then(asyncWorkerGroupMovies);
+    const requestPromise = addRequest(request);
 
-    setDataPromise(promise);
-
-    promise
+    requestPromise
       .then((data: GroupedMovies) => {
         setRoute({ name: "search", query, data });
       })
@@ -197,15 +203,12 @@ export const MoviesRoot: React.FC = () => {
   };
 
   const onSelectMovieId = (id: string) => {
-    if (dataPromise) {
-      dataPromise.cancel();
-    }
-
     setRoute({ name: "loading" });
 
-    const promise = cancelable(fetchMovieById(id));
+    const request = fetchMovieById(id);
+    const requestPromise = addRequest(request);
 
-    promise
+    requestPromise
       .then((data: MovieDetailsData) => {
         setRoute({ name: "details", id, data });
       })
@@ -217,7 +220,7 @@ export const MoviesRoot: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center">
-      <Header onSearch={(query) => onSearch(query)} />
+      <Header onSearch={onSearch} />
       <div className="flex w-full max-w-screen-lg p-5">
         <MainRoute route={state.route} onSelectMovieId={onSelectMovieId} />
       </div>
