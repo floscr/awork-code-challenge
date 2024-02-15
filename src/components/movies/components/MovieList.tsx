@@ -35,6 +35,7 @@ const Movie = function ({ movie, onSelectMovieId }: MovieProps) {
           target="_blank"
           rel="noopener noreferrer"
           className="mt-4 inline-block text-blue-500 hover:text-blue-600"
+          onClick={(e) => e.stopPropagation()}
         >
           View on IMDB
         </a>
