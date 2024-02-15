@@ -38,6 +38,7 @@ const omdbUrl = ({
 };
 
 export const onError = function (error: Error): string {
+  console.error(error);
   if (error instanceof z.ZodError) {
     return "Invalid API response structure.";
   } else {
