@@ -165,7 +165,7 @@ const MainRoute: React.FC<MainRouteProps> = function ({
     .otherwise(() => null);
 };
 
-export const Movies: React.FC = () => {
+export const MoviesRoot: React.FC = () => {
   const [state, setState] = useState<State>(defaultState);
   const [dataPromise, setDataPromise] = useState<CancelablePromise>();
 

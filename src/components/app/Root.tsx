@@ -1,9 +1,9 @@
-import { Movies } from "../movies/Movies";
+import { MoviesRoot } from "../movies/Root";
 
 const App: React.FC = () => {
   return (
     <div className="dark">
-      <Movies />
+      <MoviesRoot />
     </div>
   );
 };
