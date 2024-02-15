@@ -58,7 +58,8 @@ export const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
         <img
           src={movie.Poster}
           alt="Movie Poster"
-          className="w-full rounded-lg md:w-48"
+          className="mb-auto w-full rounded-lg md:w-48"
+          style={{ maxWidth: "250px", height: "auto" }}
         />
       </div>
       <div className="mt-4 md:ml-6 md:mt-0">
