@@ -18,9 +18,9 @@ export const Search: React.FC<SearchProps> = ({ onSubmit }) => {
   };
 
   return (
-    <form className="flex space-x-3" onSubmit={onFormSubmit}>
+    <form className="m-0 flex grow gap-3 sm:max-w-sm" onSubmit={onFormSubmit}>
       <input
-        className="h-10 rounded-lg border border-slate-700 bg-slate-800 px-5 pr-16 text-sm focus:border-blue-500 focus:outline-none"
+        className="h-10 w-full rounded-lg border border-slate-700 bg-slate-800 px-5 text-sm focus:border-blue-500 focus:outline-none"
         type="text"
         placeholder="Search movies..."
         value={query}
