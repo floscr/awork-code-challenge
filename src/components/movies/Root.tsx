@@ -39,6 +39,7 @@ interface MainRouteProps {
   route: Route;
   onSelectMovieId: (id: string) => void;
   onSearch: (query: string) => void;
+  onHomeNavigate: () => void;
 }
 
 const MainRoute: React.FC<MainRouteProps> = function ({
@@ -92,6 +93,14 @@ export const MoviesRoot: React.FC = () => {
     return cancellableRequest;
   };
 
+  const onHomeNavigate = () => {
+    if (dataPromise) {
+      dataPromise.cancel();
+    }
+
+    setRoute({ name: "home" });
+  };
+
   const onSearch = (query: string) => {
     if (query === "") {
       setRoute({ name: "home" });
@@ -131,12 +140,13 @@ export const MoviesRoot: React.FC = () => {
 
   return (
     <div className="flex grow flex-col items-center">
-      <Header onSearch={onSearch} />
+      <Header onSearch={onSearch} onHomeNavigate={onHomeNavigate} />
       <div className="flex w-full grow grow justify-center overflow-y-auto">
         <MainRoute
           route={state.route}
           onSelectMovieId={onSelectMovieId}
           onSearch={onSearch}
+          onHomeNavigate={onHomeNavigate}
         />
       </div>
     </div>
