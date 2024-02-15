@@ -80,3 +80,4 @@ Things I would improve:
 - Use fetching library instead of doing a custom rolled solution using the cancellable Promise
 - Add tests
 - More user-friendly errors
+- Data caching
