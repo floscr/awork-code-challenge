@@ -1,5 +1,9 @@
 # Boilerplate
 
+This is the code demo for awork, you can find the live example here:
+
+https://awork-code-challenge.vercel.app/
+
 ## Installation
 
 This repository uses [Bun](https://bun.sh/) for installation & running, but npm/yarn should work as well
@@ -40,8 +44,6 @@ I've opted for tailwind class names for the styling, as it's the quickest way to
 
 I've used <a href="https://zod.dev/" rel="noopener">Zod</a> library in this repository for the data schema validation, which was not a requirement but it's almost for free code wise and makes your types much easier to reason about.
 
-It would be possible to not use the library as per request, but that would make the code convoluted, so I've made an exception here, I hope that's ok :)
-
 ### Testing the API
 
 You can test the API via a `REPL` without having to interact with the ui like this:
@@ -67,3 +69,12 @@ To show movie details:
 ``` js
 fetchMovieById('tt0482521').then(console.log)
 ```
+
+## Notes
+
+Things I would improve:
+
+- Use a routing library, but as routing wasn't required I've opted not to use it for the sake of simplicity
+- Use fetching library instead of doing a custom rolled solution using the cancellable Promise
+- Add tests
+- More user-friendly errors
