@@ -52,6 +52,7 @@ const MainRoute: React.FC<MainRouteProps> = function ({
         <Spinner />
       </div>
     ))
+    .with({ name: "error", error: P.select() }, (error) => <div>{error}</div>)
     .otherwise(() => null);
 };
 
