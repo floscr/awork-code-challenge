@@ -141,7 +141,7 @@ export const MoviesRoot: React.FC = () => {
   return (
     <div className="flex grow flex-col items-center">
       <Header onSearch={onSearch} onHomeNavigate={onHomeNavigate} />
-      <div className="flex w-full grow grow justify-center overflow-y-auto">
+      <div className="flex w-full grow justify-center overflow-y-auto">
         <MainRoute
           route={state.route}
           onSelectMovieId={onSelectMovieId}
