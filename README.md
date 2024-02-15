@@ -81,3 +81,4 @@ Things I would improve:
 - Add tests
 - More user-friendly errors
 - Data caching
+- Build out design system & colors
