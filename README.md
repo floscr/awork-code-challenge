@@ -4,7 +4,7 @@ This is the code demo for awork, you can find the live example here:
 
 https://awork-code-challenge.vercel.app/
 
-![image](https://github.com/floscr/awork-code-challenge/assets/1898374/cd70ed93-4f86-4081-a100-4dc3e7257468)
+[![image](https://github.com/floscr/awork-code-challenge/assets/1898374/cd70ed93-4f86-4081-a100-4dc3e7257468)](https://awork-code-challenge.vercel.app/)
 
 ## Installation
 
