@@ -13,6 +13,7 @@ import { GroupedMovies } from "./types/GroupedMovies";
 import { Header } from "./components/Header";
 import { MovieDetails } from "./components/MovieDetails";
 import { MovieList } from "./components/MovieList";
+import { Spinner } from "./components/Spinner";
 
 type Route =
   | { name: "home" }
@@ -45,6 +46,11 @@ const MainRoute: React.FC<MainRouteProps> = function ({
     ))
     .with({ name: "details", data: P.select() }, (movie) => (
       <MovieDetails movie={movie} />
+    ))
+    .with({ name: "loading" }, () => (
+      <div className="flex grow items-center justify-center">
+        <Spinner />
+      </div>
     ))
     .otherwise(() => null);
 };
