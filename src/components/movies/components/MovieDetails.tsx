@@ -62,9 +62,7 @@ export const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
         />
       </div>
       <div className="mt-4 md:ml-6 md:mt-0">
-        <div className="text-sm font-semibold uppercase tracking-wide text-indigo-500">
-          {movie.Genre}
-        </div>
+        <div className="text-sm opacity-50">{movie.Genre}</div>
         <a
           href={`https://www.imdb.com/title/${movie.imdbID}`}
           target="_blank"
