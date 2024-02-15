@@ -11,6 +11,7 @@ import {
 import { MovieDetailsData } from "./types/MovieDetailsData";
 import { GroupedMovies } from "./types/GroupedMovies";
 import { Header } from "./components/Header";
+import { Home } from "./components/Home";
 import { MovieDetails } from "./components/MovieDetails";
 import { MovieList } from "./components/MovieList";
 import { Spinner } from "./components/Spinner";
@@ -30,6 +31,10 @@ const defaultState: State = {
   route: { name: "home" },
 };
 
+const ContentWrapper = ({ children }: { children: React.ReactNode }) => (
+  <div className="flex w-full max-w-screen-lg flex-col p-5">{children}</div>
+);
+
 interface MainRouteProps {
   route: Route;
   onSelectMovieId: (id: string) => void;
@@ -40,19 +45,27 @@ const MainRoute: React.FC<MainRouteProps> = function ({
   onSelectMovieId,
 }) {
   return match(route)
-    .with({ name: "home" }, () => <div>{"Hello"}</div>)
+    .with({ name: "home" }, () => <Home />)
     .with({ name: "search", data: P.select() }, (movies) => (
-      <MovieList movies={movies} onSelectMovieId={onSelectMovieId} />
+      <ContentWrapper>
+        <MovieList movies={movies} onSelectMovieId={onSelectMovieId} />
+      </ContentWrapper>
     ))
     .with({ name: "details", data: P.select() }, (movie) => (
-      <MovieDetails movie={movie} />
+      <ContentWrapper>
+        <MovieDetails movie={movie} />
+      </ContentWrapper>
     ))
     .with({ name: "loading" }, () => (
       <div className="flex grow items-center justify-center">
         <Spinner />
       </div>
     ))
-    .with({ name: "error", error: P.select() }, (error) => <div>{error}</div>)
+    .with({ name: "error", error: P.select() }, (error) => (
+      <ContentWrapper>
+        <div>{error}</div>
+      </ContentWrapper>
+    ))
     .otherwise(() => null);
 };
 
@@ -117,10 +130,8 @@ export const MoviesRoot: React.FC = () => {
   return (
     <div className="flex grow flex-col items-center">
       <Header onSearch={onSearch} />
-      <div className="flex w-full grow overflow-y-auto">
-        <div className="mx-auto max-w-screen-lg p-5">
-          <MainRoute route={state.route} onSelectMovieId={onSelectMovieId} />
-        </div>
+      <div className="flex w-full grow grow justify-center overflow-y-auto">
+        <MainRoute route={state.route} onSelectMovieId={onSelectMovieId} />
       </div>
     </div>
   );
