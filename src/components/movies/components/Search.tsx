@@ -1,4 +1,5 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
+
 import { IconSearch } from "@tabler/icons-react";
 
 interface SearchProps {
@@ -7,6 +8,9 @@ interface SearchProps {
 
 export const Search: React.FC<SearchProps> = ({ onSubmit }) => {
   const [query, setQuery] = useState<string>("");
+
+  const onQueryChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setQuery(e.target.value);
 
   const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -20,9 +24,7 @@ export const Search: React.FC<SearchProps> = ({ onSubmit }) => {
         type="text"
         placeholder="Search movies..."
         value={query}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setQuery(e.target.value)
-        }
+        onChange={onQueryChange}
       />
       <button
         type="submit"
