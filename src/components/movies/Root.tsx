@@ -114,10 +114,12 @@ export const MoviesRoot: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex grow flex-col items-center">
       <Header onSearch={onSearch} />
-      <div className="flex w-full max-w-screen-lg p-5">
-        <MainRoute route={state.route} onSelectMovieId={onSelectMovieId} />
+      <div className="flex w-full grow overflow-y-auto">
+        <div className="mx-auto max-w-screen-lg p-5">
+          <MainRoute route={state.route} onSelectMovieId={onSelectMovieId} />
+        </div>
       </div>
     </div>
   );
