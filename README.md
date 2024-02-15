@@ -1,4 +1,4 @@
-# Boilerplate
+# Awork Code Challenge
 
 This is the code demo for awork, you can find the live example here:
 
