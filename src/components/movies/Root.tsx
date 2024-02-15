@@ -38,14 +38,16 @@ const ContentWrapper = ({ children }: { children: React.ReactNode }) => (
 interface MainRouteProps {
   route: Route;
   onSelectMovieId: (id: string) => void;
+  onSearch: (query: string) => void;
 }
 
 const MainRoute: React.FC<MainRouteProps> = function ({
   route,
   onSelectMovieId,
+  onSearch,
 }) {
   return match(route)
-    .with({ name: "home" }, () => <Home />)
+    .with({ name: "home" }, () => <Home onSearch={onSearch} />)
     .with({ name: "search", data: P.select() }, (movies) => (
       <ContentWrapper>
         <MovieList movies={movies} onSelectMovieId={onSelectMovieId} />
@@ -131,7 +133,11 @@ export const MoviesRoot: React.FC = () => {
     <div className="flex grow flex-col items-center">
       <Header onSearch={onSearch} />
       <div className="flex w-full grow grow justify-center overflow-y-auto">
-        <MainRoute route={state.route} onSelectMovieId={onSelectMovieId} />
+        <MainRoute
+          route={state.route}
+          onSelectMovieId={onSelectMovieId}
+          onSearch={onSearch}
+        />
       </div>
     </div>
   );

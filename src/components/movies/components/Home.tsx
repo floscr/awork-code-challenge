@@ -1,6 +1,13 @@
+import React from "react";
+
+import { Search } from "./Search";
 import { Logo } from "./Shared";
 
-export const Home = () => {
+interface HomeProps {
+  onSearch: (query: string) => void;
+}
+
+export const Home: React.FC<HomeProps> = ({ onSearch }) => {
   return (
     <div
       className="flex grow items-center justify-center"
@@ -11,7 +18,10 @@ export const Home = () => {
         fontSize: "30px",
       }}
     >
-      <Logo />
+      <div className="space-y-5">
+        <Logo />
+        <Search onSubmit={onSearch} />
+      </div>
     </div>
   );
 };
